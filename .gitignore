@@ -1,0 +1,25 @@
+# Data directory (contains SQLite database)
+/data/
+
+# Node modules (for Drizzle Kit)
+/node_modules/
+
+# Environment files
+.env
+.env.local
+
+# Drizzle migrations (regenerate from schema)
+/drizzle/
+
+# Deno
+.deno/
+
+# OS files
+.DS_Store
+*.swp
+*.swo
+*~
+
+# Editor directories
+.vscode/
+.idea/
