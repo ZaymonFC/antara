@@ -23,3 +23,6 @@
 # Editor directories
 .vscode/
 .idea/
+
+# Claude / AI Coding
+.claude/blackboard.db
