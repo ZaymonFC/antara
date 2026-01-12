@@ -1,0 +1,218 @@
+# Antara Domain Model v2
+# "antara" (अन्तर) - Sanskrit for interval, space, gap
+
+purpose: |
+  Track the rhythms of life - recurring patterns you want to maintain.
+  Everything has a rhythm (when), a target (how much), and a measurement (what units).
+
+# =============================================================================
+# RHYTHM - The temporal pattern
+# =============================================================================
+
+Rhythm:
+  description: |
+    Defines WHEN something should happen or be measured. A separate entity
+    that Activities reference. Three variants covering all temporal patterns.
+
+  variants:
+    Trailing:
+      description: |
+        Sliding window from current moment. "3x in the last 7 days" means
+        looking back 7 days from NOW, always shifting forward.
+      properties:
+        count: number # How many times
+        unit: days | weeks | months
+      examples:
+        - { count: 7, unit: days } # "in the last 7 days"
+        - { count: 2, unit: weeks } # "in the last 2 weeks"
+      use_cases:
+        - "Exercise 5x in the last 7 days"
+        - "Read 3x in the last week"
+
+    Recurring:
+      description: |
+        Resets from last completion. "Every 5 days" means 5 days since you
+        last did it. Completing it resets the clock.
+      properties:
+        every: number
+        unit: days | weeks | months
+      examples:
+        - { every: 5, unit: days } # "every 5 days"
+        - { every: 2, unit: weeks } # "every 2 weeks"
+      use_cases:
+        - "Clean bathroom every 30 days"
+        - "Change oil every 3 months"
+
+    Calendar:
+      description: |
+        Fixed calendar periods. "Per week" means within this calendar week
+        (Monday-Sunday per device locale). Resets at period boundary.
+      properties:
+        period: daily | weekly | monthly | yearly
+      boundary_rules: |
+        - daily: midnight to midnight (local time)
+        - weekly: week start per device locale (typically Monday or Sunday)
+        - monthly: 1st 00:00 to last day 23:59
+        - yearly: Jan 1 00:00 to Dec 31 23:59
+      examples:
+        - { period: weekly } # "per week"
+        - { period: monthly } # "per month"
+      use_cases:
+        - "Climb 3x per week"
+        - "Practice drums 150 minutes per week"
+
+# =============================================================================
+# ACTIVITY - The thing you track
+# =============================================================================
+
+Activity:
+  description: |
+    A recurring pattern in your life that you want to maintain awareness of.
+    Unified type with a 'framing' property for UX differentiation.
+
+  properties:
+    name: string
+    framing: task | pursuit
+    rhythm: reference to Rhythm
+    target: number # Always required - what you're aiming for
+    measurement: instances | duration
+
+  framing_distinction:
+    task: |
+      Maintenance mindset. "Did I do this recently enough?"
+      Typically used with Recurring rhythm (resets on completion).
+      CONSTRAINT: measurement must be 'instances'.
+    pursuit: |
+      Growth mindset. "How much have I invested this period?"
+      Can use any rhythm type, any measurement type.
+
+  measurement_distinction:
+    instances: |
+      Count occurrences. Each completion = 1 instance.
+      Used for activities where duration doesn't matter.
+    duration: |
+      Accumulate time. Each completion logs minutes.
+      Used for activities where time invested matters.
+
+  constraints:
+    - "framing = task → measurement = instances"
+    - "target is always required (minimum 1)"
+
+  examples:
+    - name: "Clean bathroom"
+      framing: task
+      rhythm: { kind: recurring, every: 30, unit: days }
+      target: 1
+      measurement: instances
+
+    - name: "Climbing"
+      framing: pursuit
+      rhythm: { kind: calendar, period: weekly }
+      target: 3
+      measurement: instances
+
+    - name: "Drum practice"
+      framing: pursuit
+      rhythm: { kind: calendar, period: weekly }
+      target: 150
+      measurement: duration
+
+    - name: "Exercise"
+      framing: pursuit
+      rhythm: { kind: trailing, count: 7, unit: days }
+      target: 5
+      measurement: instances
+
+# =============================================================================
+# HISTORY - Event store
+# =============================================================================
+
+History:
+  description: |
+    Event store for all activity completions. Individual events are stored,
+    aggregates computed in memory on demand.
+
+  events:
+    UserCompletedActivity:
+      description: |
+        User marked an activity as done. Used for instance-based tracking.
+      properties:
+        activityId: reference to Activity
+        timestamp: datetime
+      constraint: "Only valid when activity.measurement = instances"
+
+    UserLoggedActivityDuration:
+      description: |
+        User logged time spent on an activity. Used for duration-based tracking.
+      properties:
+        activityId: reference to Activity
+        timestamp: datetime
+        minutes: number
+      constraint: "Only valid when activity.measurement = duration"
+
+# =============================================================================
+# COMPUTED - Derived in memory
+# =============================================================================
+
+Computed:
+  description: |
+    All progress/status is computed on-demand from History + Rhythm + Activity.
+    Nothing stored - pure functions over event data.
+
+  derivations:
+    progress:
+      description: "How much toward target within current rhythm period"
+      formula: |
+        For instances: count events in rhythm window
+        For duration: sum minutes in rhythm window
+      output: { current: number, target: number, percentage: number }
+
+    status:
+      description: "View-layer concern - is this due/overdue/etc"
+      note: "Not part of domain model - computed by view layer as needed"
+
+# =============================================================================
+# GLOSSARY - Ubiquitous language
+# =============================================================================
+
+glossary:
+  rhythm: "The temporal pattern - when/how often something should happen"
+  trailing: "Sliding window rhythm - 'in the last N days' from now"
+  recurring: "Reset rhythm - 'every N days' from last completion"
+  calendar: "Fixed period rhythm - 'per week/month' by calendar"
+
+  activity: "Something you track - has rhythm, target, measurement"
+  framing: "UX mindset - task (maintenance) vs pursuit (growth)"
+  target: "The goal number - instances or minutes to achieve"
+  measurement: "What we count - instances (occurrences) or duration (minutes)"
+
+  history: "Event store of all completions and duration logs"
+  progress: "Current vs target within rhythm period (computed)"
+
+# =============================================================================
+# RELATIONSHIPS
+# =============================================================================
+
+relationships:
+  - "Activity references one Rhythm"
+  - "History events reference one Activity"
+  - "Deleting Activity cascades to its History events"
+  - "Rhythm can be shared by multiple Activities (optional - could embed)"
+
+# =============================================================================
+# OPEN QUESTIONS
+# =============================================================================
+
+open_questions:
+  rhythm_sharing: |
+    Should Rhythm be a separate table (shareable) or embedded in Activity?
+    Embedded is simpler but duplicates data. Separate allows "3x/week" rhythm
+    to be reused across multiple activities.
+
+  timezone_handling: |
+    Calendar rhythms use device locale. What happens when user travels?
+    Current answer: Accept imperfection, use current device time.
+
+  event_pruning: |
+    Should old history events be pruned? Or kept forever?
+    Current answer: Keep forever (storage is cheap, history is valuable).

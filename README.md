@@ -1,6 +1,6 @@
-# Ananta
+# Antara
 
-> *antara* (अन्तर) - Sanskrit for interval, space, or gap
+> _antara_ (अन्तर) - Sanskrit for interval, space, or gap
 
 A CLI/TUI productivity tracker for managing interval-based tasks and accumulation-based pursuits.
 
@@ -15,24 +15,26 @@ Much of life breaks down into activities that must be performed at intervals or 
 
 ### Core Concepts
 
-| Term | Definition | Examples |
-|------|------------|----------|
-| **Activity** | Top-level entity for anything you track | Any task or pursuit |
-| **Task** | Completion-based activity with an interval | Clean bathroom (1/month), Change oil (every 90 days) |
-| **Pursuit** | Accumulation-based activity toward a goal | Climbing 3x/week, Drums 150min/week |
-| **Entry** | A logged occurrence of an activity | Completed task, logged session, time spent |
-| **Period** | Time window for accumulation goals | `daily`, `weekly`, `monthly`, `yearly` |
-| **Mode** | How a pursuit is measured | `sessions` (count) or `duration` (minutes) |
+| Term         | Definition                                 | Examples                                             |
+| ------------ | ------------------------------------------ | ---------------------------------------------------- |
+| **Activity** | Top-level entity for anything you track    | Any task or pursuit                                  |
+| **Task**     | Completion-based activity with an interval | Clean bathroom (1/month), Change oil (every 90 days) |
+| **Pursuit**  | Accumulation-based activity toward a goal  | Climbing 3x/week, Drums 150min/week                  |
+| **Entry**    | A logged occurrence of an activity         | Completed task, logged session, time spent           |
+| **Period**   | Time window for accumulation goals         | `daily`, `weekly`, `monthly`, `yearly`               |
+| **Mode**     | How a pursuit is measured                  | `sessions` (count) or `duration` (minutes)           |
 
 ### Activity Types
 
 #### Tasks
+
 - Completion-based (you did it or you didn't)
 - Have an **interval** in days
 - Track when last completed
 - Show days until next due
 
 #### Pursuits
+
 Two modes:
 
 1. **Session Mode** - Count instances
@@ -50,10 +52,11 @@ Two modes:
 ### Quick Log (Default)
 
 ```bash
-ananta
+antara
 ```
 
 Opens interactive prompt:
+
 1. Fuzzy search for activity
 2. For tasks: instant log
 3. For pursuits:
@@ -63,7 +66,7 @@ Opens interactive prompt:
 ### Create New Activity
 
 ```bash
-ananta create
+antara create
 ```
 
 Interactive prompts to create a task or pursuit with interval/target configuration.
@@ -71,10 +74,11 @@ Interactive prompts to create a task or pursuit with interval/target configurati
 ### View Status
 
 ```bash
-ananta status
+antara status
 ```
 
 Shows all activities with current progress:
+
 - Tasks: days until due / overdue
 - Pursuits: progress bar toward period target
 
@@ -91,6 +95,7 @@ Database Layer (src/db/)       - Schema, connections, migrations
 ```
 
 **Principles:**
+
 - Core library is pure, testable, takes database as first argument
 - CLI layer only handles interaction and parsing
 - All business logic lives in the core
@@ -99,7 +104,7 @@ Database Layer (src/db/)       - Schema, connections, migrations
 ### File Structure
 
 ```
-ananta/
+antara/
 ├── deno.json              # Deno config, imports, tasks
 ├── drizzle.config.ts      # Drizzle ORM configuration
 ├── README.md              # This file
@@ -182,8 +187,8 @@ const db = createTestDatabase(); // Fresh :memory: DB
 
 ```bash
 deno install --allow-read --allow-write --allow-env --allow-ffi \
-  --name ananta \
-  https://raw.githubusercontent.com/yourusername/ananta/main/src/cli/main.ts
+  --name antara \
+  https://raw.githubusercontent.com/yourusername/antara/main/src/cli/main.ts
 ```
 
 ## API Reference
