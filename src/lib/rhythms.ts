@@ -17,23 +17,35 @@ import type { CalendarPeriod, Rhythm, TimeUnit } from "../types.ts";
  */
 function toRhythm(row: DbRhythm): Rhythm {
   switch (row.kind) {
-    case "trailing":
+    case "trailing": {
+      if (row.trailingCount == null || row.trailingUnit == null) {
+        throw new Error("Invalid trailing rhythm: missing count or unit");
+      }
       return {
         kind: "trailing",
-        count: row.trailingCount!,
-        unit: row.trailingUnit! as TimeUnit,
+        count: row.trailingCount,
+        unit: row.trailingUnit as TimeUnit,
       };
-    case "recurring":
+    }
+    case "recurring": {
+      if (row.recurringEvery == null || row.recurringUnit == null) {
+        throw new Error("Invalid recurring rhythm: missing every or unit");
+      }
       return {
         kind: "recurring",
-        every: row.recurringEvery!,
-        unit: row.recurringUnit! as TimeUnit,
+        every: row.recurringEvery,
+        unit: row.recurringUnit as TimeUnit,
       };
-    case "calendar":
+    }
+    case "calendar": {
+      if (row.calendarPeriod == null) {
+        throw new Error("Invalid calendar rhythm: missing period");
+      }
       return {
         kind: "calendar",
-        period: row.calendarPeriod! as CalendarPeriod,
+        period: row.calendarPeriod as CalendarPeriod,
       };
+    }
     default:
       throw new Error(`Unknown rhythm kind: ${row.kind}`);
   }
