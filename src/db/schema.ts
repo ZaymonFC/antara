@@ -7,8 +7,8 @@
  * - History: Event store for completions and duration logs
  */
 
-import { sqliteTable, integer, text } from "drizzle-orm/sqlite-core";
-import type { InferSelectModel, InferInsertModel } from "drizzle-orm";
+import type { InferInsertModel, InferSelectModel } from "drizzle-orm";
+import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
 /**
  * Rhythms table - stores rhythm configurations

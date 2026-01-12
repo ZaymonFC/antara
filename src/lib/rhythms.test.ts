@@ -2,16 +2,16 @@
  * Tests for rhythm CRUD operations
  */
 
-import { describe, it, beforeEach } from "@std/testing/bdd";
 import { assertEquals, assertExists } from "@std/assert";
-import { createTestDatabase } from "../db/test-utils.ts";
+import { beforeEach, describe, it } from "@std/testing/bdd";
 import type { Database } from "../db/connection.ts";
+import { createTestDatabase } from "../db/test-utils.ts";
 import {
-  createTrailingRhythm,
-  createRecurringRhythm,
   createCalendarRhythm,
-  getRhythm,
+  createRecurringRhythm,
+  createTrailingRhythm,
   deleteRhythm,
+  getRhythm,
 } from "./rhythms.ts";
 
 describe("rhythms", () => {

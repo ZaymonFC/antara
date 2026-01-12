@@ -9,12 +9,8 @@
 
 import { eq } from "drizzle-orm";
 import type { Database } from "../db/connection.ts";
-import { rhythms, type Rhythm as DbRhythm } from "../db/schema.ts";
-import type {
-  Rhythm,
-  TimeUnit,
-  CalendarPeriod,
-} from "../types.ts";
+import { type Rhythm as DbRhythm, rhythms } from "../db/schema.ts";
+import type { CalendarPeriod, Rhythm, TimeUnit } from "../types.ts";
 
 /**
  * Convert a database rhythm row to a domain Rhythm type
@@ -48,7 +44,7 @@ function toRhythm(row: DbRhythm): Rhythm {
  */
 export async function createTrailingRhythm(
   db: Database,
-  input: { count: number; unit: TimeUnit }
+  input: { count: number; unit: TimeUnit },
 ): Promise<DbRhythm> {
   const [rhythm] = await db
     .insert(rhythms)
@@ -66,7 +62,7 @@ export async function createTrailingRhythm(
  */
 export async function createRecurringRhythm(
   db: Database,
-  input: { every: number; unit: TimeUnit }
+  input: { every: number; unit: TimeUnit },
 ): Promise<DbRhythm> {
   const [rhythm] = await db
     .insert(rhythms)
@@ -84,7 +80,7 @@ export async function createRecurringRhythm(
  */
 export async function createCalendarRhythm(
   db: Database,
-  input: { period: CalendarPeriod }
+  input: { period: CalendarPeriod },
 ): Promise<DbRhythm> {
   const [rhythm] = await db
     .insert(rhythms)
@@ -99,10 +95,7 @@ export async function createCalendarRhythm(
 /**
  * Get a rhythm by ID and convert to domain type
  */
-export async function getRhythm(
-  db: Database,
-  id: number
-): Promise<Rhythm | undefined> {
+export async function getRhythm(db: Database, id: number): Promise<Rhythm | undefined> {
   const [row] = await db.select().from(rhythms).where(eq(rhythms.id, id));
   if (!row) return undefined;
   return toRhythm(row);
@@ -111,10 +104,7 @@ export async function getRhythm(
 /**
  * Get raw rhythm row by ID (for internal use)
  */
-export async function getRhythmRow(
-  db: Database,
-  id: number
-): Promise<DbRhythm | undefined> {
+export async function getRhythmRow(db: Database, id: number): Promise<DbRhythm | undefined> {
   const [row] = await db.select().from(rhythms).where(eq(rhythms.id, id));
   return row;
 }

@@ -4,8 +4,8 @@
  * Provides fresh in-memory SQLite databases for isolated testing
  */
 
-import { createDatabase, type Database } from "./connection.ts";
 import { migrate } from "drizzle-orm/libsql/migrator";
+import { createDatabase, type Database } from "./connection.ts";
 
 /**
  * Create a fresh in-memory database for testing

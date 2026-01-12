@@ -4,20 +4,20 @@
  * BDD style tests for the event store that records activity completions and duration logs.
  */
 
-import { describe, it, beforeEach } from "@std/testing/bdd";
 import { assertEquals, assertExists, assertRejects } from "@std/assert";
-import { createTestDatabase } from "../db/test-utils.ts";
+import { beforeEach, describe, it } from "@std/testing/bdd";
 import type { Database } from "../db/connection.ts";
+import { createTestDatabase } from "../db/test-utils.ts";
 import { Framing, Measurement } from "../types.ts";
-import { createCalendarRhythm } from "./rhythms.ts";
 import { createActivity } from "./activities.ts";
 import {
-  recordCompletion,
-  recordDuration,
+  deleteHistoryEvent,
   getActivityHistory,
   getRecentHistory,
-  deleteHistoryEvent,
+  recordCompletion,
+  recordDuration,
 } from "./history.ts";
+import { createCalendarRhythm } from "./rhythms.ts";
 
 describe("history", () => {
   let db: Database;
@@ -82,7 +82,7 @@ describe("history", () => {
           });
         },
         Error,
-        "Activity not found"
+        "Activity not found",
       );
     });
 
@@ -102,7 +102,7 @@ describe("history", () => {
           });
         },
         Error,
-        "Cannot record completion for duration-measurement activity"
+        "Cannot record completion for duration-measurement activity",
       );
     });
   });
@@ -162,7 +162,7 @@ describe("history", () => {
           });
         },
         Error,
-        "Activity not found"
+        "Activity not found",
       );
     });
 
@@ -183,7 +183,7 @@ describe("history", () => {
           });
         },
         Error,
-        "Cannot record duration for instances-measurement activity"
+        "Cannot record duration for instances-measurement activity",
       );
     });
   });
@@ -204,7 +204,10 @@ describe("history", () => {
       const events = await getActivityHistory(db, activity.id);
 
       assertEquals(events.length, 3);
-      assertEquals(events.every((e) => e.activityId === activity.id), true);
+      assertEquals(
+        events.every((e) => e.activityId === activity.id),
+        true,
+      );
     });
 
     it("should return in descending order by timestamp", async () => {
@@ -429,7 +432,10 @@ describe("history", () => {
 
       const events = await getActivityHistory(db, activity.id);
       assertEquals(events.length, 1);
-      assertEquals(events.some((e) => e.id === event1.id), false);
+      assertEquals(
+        events.some((e) => e.id === event1.id),
+        false,
+      );
     });
 
     it("should return false for non-existent event", async () => {

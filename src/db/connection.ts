@@ -6,8 +6,8 @@
  * - getDatabase() - Singleton for production use
  */
 
+import { type Client, createClient } from "@libsql/client";
 import { drizzle } from "drizzle-orm/libsql";
-import { createClient, type Client } from "@libsql/client";
 import * as schema from "./schema.ts";
 
 export type Database = ReturnType<typeof drizzle<typeof schema>>;

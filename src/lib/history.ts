@@ -8,9 +8,9 @@
  * Validation ensures events match activity measurement type.
  */
 
-import { eq, desc, and, gte, lte } from "drizzle-orm";
+import { and, desc, eq, gte, lte } from "drizzle-orm";
 import type { Database } from "../db/connection.ts";
-import { history, activities, type HistoryEvent } from "../db/schema.ts";
+import { activities, type HistoryEvent, history } from "../db/schema.ts";
 
 // =============================================================================
 // Create
@@ -29,7 +29,7 @@ export async function recordCompletion(
   input: {
     activityId: number;
     timestamp?: Date;
-  }
+  },
 ): Promise<HistoryEvent> {
   // Verify activity exists and has correct measurement type
   const activity = await db
@@ -73,7 +73,7 @@ export async function recordDuration(
     activityId: number;
     minutes: number;
     timestamp?: Date;
-  }
+  },
 ): Promise<HistoryEvent> {
   // Verify activity exists and has correct measurement type
   const activity = await db
@@ -120,7 +120,7 @@ export async function getActivityHistory(
     from?: Date;
     to?: Date;
     limit?: number;
-  }
+  },
 ): Promise<HistoryEvent[]> {
   const conditions = [eq(history.activityId, activityId)];
 
@@ -151,16 +151,8 @@ export async function getActivityHistory(
  *
  * Results are returned in descending order by timestamp (most recent first).
  */
-export async function getRecentHistory(
-  db: Database,
-  limit: number = 10
-): Promise<HistoryEvent[]> {
-  return await db
-    .select()
-    .from(history)
-    .orderBy(desc(history.timestamp))
-    .limit(limit)
-    .all();
+export async function getRecentHistory(db: Database, limit: number = 10): Promise<HistoryEvent[]> {
+  return await db.select().from(history).orderBy(desc(history.timestamp)).limit(limit).all();
 }
 
 // =============================================================================
@@ -172,15 +164,8 @@ export async function getRecentHistory(
  *
  * @returns true if deleted, false if not found
  */
-export async function deleteHistoryEvent(
-  db: Database,
-  id: number
-): Promise<boolean> {
-  const result = await db
-    .delete(history)
-    .where(eq(history.id, id))
-    .returning()
-    .get();
+export async function deleteHistoryEvent(db: Database, id: number): Promise<boolean> {
+  const result = await db.delete(history).where(eq(history.id, id)).returning().get();
 
   return result !== undefined;
 }

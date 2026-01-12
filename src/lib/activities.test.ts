@@ -4,20 +4,20 @@
  * BDD style tests for unified activity model with framing, rhythm, target, and measurement.
  */
 
-import { describe, it, beforeEach } from "@std/testing/bdd";
 import { assertEquals, assertExists, assertRejects } from "@std/assert";
-import { createTestDatabase } from "../db/test-utils.ts";
+import { beforeEach, describe, it } from "@std/testing/bdd";
 import type { Database } from "../db/connection.ts";
+import { createTestDatabase } from "../db/test-utils.ts";
 import { Framing, Measurement } from "../types.ts";
-import { createCalendarRhythm } from "./rhythms.ts";
 import {
   createActivity,
+  deleteActivity,
   getActivity,
   listActivities,
   searchActivities,
   updateActivity,
-  deleteActivity,
 } from "./activities.ts";
+import { createCalendarRhythm } from "./rhythms.ts";
 
 describe("activities", () => {
   let db: Database;
@@ -61,7 +61,7 @@ describe("activities", () => {
           });
         },
         Error,
-        "Tasks must use instances measurement"
+        "Tasks must use instances measurement",
       );
     });
 
@@ -179,7 +179,10 @@ describe("activities", () => {
       const tasks = await listActivities(db, { framing: Framing.task });
 
       assertEquals(tasks.length, 2);
-      assertEquals(tasks.every((a) => a.framing === "task"), true);
+      assertEquals(
+        tasks.every((a) => a.framing === "task"),
+        true,
+      );
     });
 
     it("should filter by framing=pursuit", async () => {
@@ -208,7 +211,10 @@ describe("activities", () => {
       const pursuits = await listActivities(db, { framing: Framing.pursuit });
 
       assertEquals(pursuits.length, 2);
-      assertEquals(pursuits.every((a) => a.framing === "pursuit"), true);
+      assertEquals(
+        pursuits.every((a) => a.framing === "pursuit"),
+        true,
+      );
     });
   });
 
@@ -239,8 +245,14 @@ describe("activities", () => {
       const results = await searchActivities(db, "pla");
 
       assertEquals(results.length, 2);
-      assertEquals(results.some((a) => a.name === "Water plants"), true);
-      assertEquals(results.some((a) => a.name === "Play piano"), true);
+      assertEquals(
+        results.some((a) => a.name === "Water plants"),
+        true,
+      );
+      assertEquals(
+        results.some((a) => a.name === "Play piano"),
+        true,
+      );
     });
 
     it("should be case-insensitive", async () => {
