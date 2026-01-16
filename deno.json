@@ -4,8 +4,11 @@
   "exports": "./src/cli/main.ts",
   "nodeModulesDir": "auto",
   "imports": {
+    "@cliffy/ansi": "jsr:@cliffy/ansi@^1.0.0-rc.8",
     "@cliffy/command": "jsr:@cliffy/command@^1.0.0-rc.8",
     "@cliffy/prompt": "jsr:@cliffy/prompt@^1.0.0-rc.8",
+    "@cliffy/table": "jsr:@cliffy/table@^1.0.0-rc.8",
+    "date-fns": "npm:date-fns@^4.1.0",
     "drizzle-orm": "npm:drizzle-orm@^0.38",
     "drizzle-orm/libsql": "npm:drizzle-orm@^0.38/libsql",
     "drizzle-orm/sqlite-core": "npm:drizzle-orm@^0.38/sqlite-core",
@@ -15,8 +18,8 @@
   },
   "tasks": {
     "dev": "deno run --watch -ERWS --allow-ffi src/cli/main.ts",
-    "start": "deno run -ERWS --allow-ffi src/cli/main.ts",
-    "test": "deno test --allow-ffi --allow-read --allow-write",
+    "cli": "deno run -ERWS --allow-ffi src/cli/main.ts",
+    "test": "deno test --allow-ffi --allow-read --allow-write --allow-env",
     "check": "deno check src/",
     "lint": "deno run -A npm:@biomejs/biome lint ./src",
     "fmt": "deno run -A npm:@biomejs/biome format --write ./src",

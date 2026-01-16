@@ -41,8 +41,8 @@ export async function createCommand(db: Database): Promise<void> {
     message: "How often?",
     options: [
       { name: "per week/month (calendar periods)", value: "calendar" },
-      { name: "in the last N days (rolling window)", value: "trailing" },
-      { name: "every N days (resets when done)", value: "recurring" },
+      { name: "rolling window (last N days/weeks)", value: "trailing" },
+      { name: "recurring (resets when done)", value: "recurring" },
     ],
   });
 
@@ -64,7 +64,7 @@ export async function createCommand(db: Database): Promise<void> {
     rhythmDescription = `per ${period.replace("ly", "")}`;
   } else if (rhythmType === "trailing") {
     const unit = (await Select.prompt({
-      message: "Rolling window of",
+      message: "In the last",
       options: [
         { name: "days", value: "days" },
         { name: "weeks", value: "weeks" },
@@ -72,7 +72,7 @@ export async function createCommand(db: Database): Promise<void> {
       ],
     })) as TimeUnit;
     const countStr = await Input.prompt({
-      message: `In the last how many ${unit}?`,
+      message: `How many ${unit}?`,
     });
     const count = parseInt(countStr, 10);
     const rhythm = await createTrailingRhythm(db, { count, unit });
@@ -80,7 +80,7 @@ export async function createCommand(db: Database): Promise<void> {
     rhythmDescription = `in the last ${count} ${unit}`;
   } else {
     const unit = (await Select.prompt({
-      message: "Repeats every",
+      message: "Every",
       options: [
         { name: "days", value: "days" },
         { name: "weeks", value: "weeks" },

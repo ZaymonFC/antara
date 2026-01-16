@@ -2,21 +2,30 @@
  * Antara CLI - Entry point
  *
  * Commands:
- * - antara        → Log an activity (default)
+ * - antara        → Show help
+ * - antara log    → Log a completion or duration
  * - antara create → Create a new activity
+ * - antara status → Show progress for all activities
  */
 
 import { Command } from "@cliffy/command";
 import { getDatabase } from "../db/connection.ts";
 import { createCommand } from "./commands/create.ts";
 import { logCommand } from "./commands/log.ts";
+import { statusCommand } from "./commands/status.ts";
 
 const db = getDatabase();
 
-await new Command()
+const cmd = new Command()
   .name("antara")
   .version("0.1.0")
-  .description("Track the rhythms of life")
+  .description(
+    "अन्तर (antara) - the intervals between. Track your rhythms: what you do, how often, and whether you're keeping up.",
+  )
+  .action(function () {
+    this.showHelp();
+  })
+  .command("log", "Log a completion or duration for an activity")
   .action(async () => {
     await logCommand(db);
   })
@@ -24,4 +33,8 @@ await new Command()
   .action(async () => {
     await createCommand(db);
   })
-  .parse(Deno.args);
+  .command("status", "Show progress for all activities")
+  .action(async () => {
+    await statusCommand(db);
+  });
+await cmd.parse(Deno.args);
