@@ -1,3 +1,21 @@
+# Antara
+
+**"antara" (अन्तर)** - Sanskrit for interval, space, gap
+
+Track life's rhythms: recurring patterns with temporal goals.
+
+## Domain
+
+See `.knowledge/domain/core.yaml` for the full domain model.
+
+**Core concepts:** Rhythm (when) → Activity (what) → History (events) → Progress (computed)
+
+**Rhythm variants:** trailing (rolling window), recurring (resets on completion), calendar (fixed periods)
+
+**Activity framing:** task (maintenance, instances only) vs pursuit (growth, instances or duration)
+
+---
+
 # Claude Code Guidelines
 
 ## After Making Changes
