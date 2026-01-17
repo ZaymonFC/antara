@@ -14,11 +14,7 @@ cd antara
 deno task install
 ```
 
-This installs `antara` globally. The database is created automatically on first run.
-
-**Data location:**
-- macOS/Windows: `~/.antara/db.sqlite`
-- Linux: `$XDG_DATA_HOME/antara/db.sqlite` (defaults to `~/.local/share/antara/`)
+This installs `antara` globally via `deno install`. The database is created automatically on first (`~/.antara/db.sqlite`).
 
 ### Rhythm
 
@@ -47,21 +43,6 @@ How progress is counted:
 - **Duration** — Accumulate minutes
 
 > Tasks always use instances. Pursuits can use either.
-
-## Usage
-
-```
-antara              अन्तर (antara) - the intervals between
-
-Commands:
-  antara log        Log a completion or duration for an activity
-  antara create     Create a new activity
-  antara status     Show progress for all activities
-
-Options:
-  -h, --help        Show help
-  -V, --version     Show version
-```
 
 ## Development
 
