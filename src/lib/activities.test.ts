@@ -14,9 +14,11 @@ import {
   deleteActivity,
   getActivity,
   listActivities,
+  renameActivity,
   searchActivities,
   updateActivity,
 } from "./activities.ts";
+import { getActivityHistory, recordCompletion } from "./history.ts";
 import { createCalendarRhythm } from "./rhythms.ts";
 
 describe("activities", () => {
@@ -363,6 +365,52 @@ describe("activities", () => {
       const result = await deleteActivity(db, 99999);
 
       assertEquals(result, false);
+    });
+  });
+
+  describe("renameActivity", () => {
+    it("should rename an activity", async () => {
+      const activity = await createActivity(db, {
+        name: "Old name",
+        framing: Framing.task,
+        rhythmId,
+        target: 1,
+        measurement: Measurement.instances,
+      });
+
+      const renamed = await renameActivity(db, activity.id, "New name");
+
+      assertExists(renamed);
+      assertEquals(renamed.name, "New name");
+      assertEquals(renamed.id, activity.id);
+    });
+
+    it("should return undefined for non-existent id", async () => {
+      const result = await renameActivity(db, 99999, "New name");
+
+      assertEquals(result, undefined);
+    });
+
+    it("should preserve history after rename", async () => {
+      const activity = await createActivity(db, {
+        name: "Original name",
+        framing: Framing.task,
+        rhythmId,
+        target: 1,
+        measurement: Measurement.instances,
+      });
+
+      // Log some history
+      await recordCompletion(db, { activityId: activity.id });
+      await recordCompletion(db, { activityId: activity.id });
+
+      // Rename the activity
+      await renameActivity(db, activity.id, "Renamed activity");
+
+      // Verify history is still attached
+      const historyEvents = await getActivityHistory(db, activity.id);
+
+      assertEquals(historyEvents.length, 2);
     });
   });
 });

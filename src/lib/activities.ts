@@ -112,6 +112,19 @@ export async function updateActivity(
 }
 
 /**
+ * Rename an activity
+ * Returns the updated activity, or undefined if not found
+ * Note: History is linked by activity_id, so renaming does not affect history
+ */
+export async function renameActivity(
+  db: Database,
+  id: number,
+  newName: string,
+): Promise<Activity | undefined> {
+  return updateActivity(db, id, { name: newName });
+}
+
+/**
  * Delete an activity by ID
  * Returns true if deleted, false if not found
  * Note: History events cascade delete via FK constraint
