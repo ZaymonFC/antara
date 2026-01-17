@@ -20,10 +20,6 @@ This installs `antara` globally. The database is created automatically on first 
 - macOS/Windows: `~/.antara/db.sqlite`
 - Linux: `$XDG_DATA_HOME/antara/db.sqlite` (defaults to `~/.local/share/antara/`)
 
-## Domain
-
-Everything has a **rhythm** (when), a **target** (how much), and a **measurement** (what units).
-
 ### Rhythm
 
 Defines _when_ something should happen. Three variants:
@@ -51,10 +47,6 @@ How progress is counted:
 - **Duration** — Accumulate minutes
 
 > Tasks always use instances. Pursuits can use either.
-
-### History
-
-Event store for completions. Progress is computed on-demand from events within the rhythm window.
 
 ## Usage
 
