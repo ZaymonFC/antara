@@ -14,18 +14,11 @@ cd antara
 deno task install
 ```
 
-This installs `antara` globally.
+This installs `antara` globally. The database is created automatically on first run.
 
 **Data location:**
 - macOS/Windows: `~/.antara/db.sqlite`
 - Linux: `$XDG_DATA_HOME/antara/db.sqlite` (defaults to `~/.local/share/antara/`)
-
-Run migrations on first use:
-
-```bash
-antara  # will create the database
-deno task db:migrate
-```
 
 ## Domain
 

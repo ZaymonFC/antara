@@ -9,12 +9,12 @@
  */
 
 import { Command } from "@cliffy/command";
-import { getDatabase } from "../db/connection.ts";
+import { initDatabase } from "../db/connection.ts";
 import { createCommand } from "./commands/create.ts";
 import { logCommand } from "./commands/log.ts";
 import { statusCommand } from "./commands/status.ts";
 
-const db = getDatabase();
+const db = await initDatabase();
 
 const cmd = new Command()
   .name("antara")

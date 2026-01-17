@@ -4,8 +4,17 @@
  * Provides fresh in-memory SQLite databases for isolated testing
  */
 
+import { dirname, fromFileUrl, join } from "@std/path";
 import { migrate } from "drizzle-orm/libsql/migrator";
 import { createDatabase, type Database } from "./connection.ts";
+
+/**
+ * Get the migrations folder path, resolved relative to this module
+ */
+function getMigrationsFolder(): string {
+  const moduleDir = dirname(fromFileUrl(import.meta.url));
+  return join(moduleDir, "../../drizzle");
+}
 
 /**
  * Create a fresh in-memory database for testing
@@ -25,6 +34,6 @@ import { createDatabase, type Database } from "./connection.ts";
  */
 export async function createTestDatabase(): Promise<Database> {
   const db = createDatabase(":memory:");
-  await migrate(db, { migrationsFolder: "./drizzle" });
+  await migrate(db, { migrationsFolder: getMigrationsFolder() });
   return db;
 }

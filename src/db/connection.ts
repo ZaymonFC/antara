@@ -3,11 +3,13 @@
  *
  * Pattern:
  * - createDatabase(url) - Factory function, injectable for tests
- * - getDatabase() - Singleton for production use
+ * - getDatabase() - Singleton for production use, auto-migrates
  */
 
 import { type Client, createClient } from "@libsql/client/node";
+import { dirname, fromFileUrl, join } from "@std/path";
 import { drizzle } from "drizzle-orm/libsql";
+import { migrate } from "drizzle-orm/libsql/migrator";
 import * as schema from "./schema.ts";
 
 export type Database = ReturnType<typeof drizzle<typeof schema>>;
@@ -20,6 +22,22 @@ export type Database = ReturnType<typeof drizzle<typeof schema>>;
 export function createDatabase(url: string): Database {
   const client: Client = createClient({ url });
   return drizzle(client, { schema });
+}
+
+/**
+ * Get the migrations folder path, resolved relative to this module
+ * Works for both local dev and global installs
+ */
+function getMigrationsFolder(): string {
+  const moduleDir = dirname(fromFileUrl(import.meta.url));
+  return join(moduleDir, "../../drizzle");
+}
+
+/**
+ * Run database migrations
+ */
+async function runMigrations(db: Database): Promise<void> {
+  await migrate(db, { migrationsFolder: getMigrationsFolder() });
 }
 
 /**
@@ -57,14 +75,31 @@ function getDatabaseUrl(): string {
 
 // Production singleton
 let _db: Database | null = null;
+let _initialized = false;
+
+/**
+ * Initialize the production database singleton
+ * Creates connection and runs migrations
+ * Must be called before getDatabase()
+ */
+export async function initDatabase(): Promise<Database> {
+  if (!_db) {
+    _db = createDatabase(getDatabaseUrl());
+  }
+  if (!_initialized) {
+    await runMigrations(_db);
+    _initialized = true;
+  }
+  return _db;
+}
 
 /**
  * Get the production database singleton
- * Creates connection on first call
+ * Throws if initDatabase() hasn't been called
  */
 export function getDatabase(): Database {
-  if (!_db) {
-    _db = createDatabase(getDatabaseUrl());
+  if (!_db || !_initialized) {
+    throw new Error("Database not initialized. Call initDatabase() first.");
   }
   return _db;
 }
@@ -74,4 +109,5 @@ export function getDatabase(): Database {
  */
 export function resetDatabase(): void {
   _db = null;
+  _initialized = false;
 }
