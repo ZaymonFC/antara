@@ -1,4 +1,4 @@
-# Antara
+# Antara (अन्तर)
 
 > _antara_ (अन्तर) - Sanskrit for interval, space, or gap
 
