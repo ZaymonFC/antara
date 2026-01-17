@@ -11,6 +11,7 @@
 import { Command } from "@cliffy/command";
 import { initDatabase } from "../db/connection.ts";
 import { createCommand } from "./commands/create.ts";
+import { editCommand } from "./commands/edit.ts";
 import { logCommand } from "./commands/log.ts";
 import { statusCommand } from "./commands/status.ts";
 
@@ -32,6 +33,10 @@ const cmd = new Command()
   .command("create", "Create a new activity")
   .action(async () => {
     await createCommand(db);
+  })
+  .command("edit", "Edit an existing activity")
+  .action(async () => {
+    await editCommand(db);
   })
   .command("status", "Show progress for all activities")
   .action(async () => {
