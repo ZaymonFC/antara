@@ -1,11 +1,13 @@
 /**
- * Log command - Default flow for logging activity completions/durations
+ * Log command - Record activity completions/durations
  */
 
 import { Input, Select } from "@cliffy/prompt";
 import type { Database } from "../../db/connection.ts";
 import { listActivities } from "../../lib/activities.ts";
 import { recordCompletion, recordDuration } from "../../lib/history.ts";
+import { displaySingleActivity } from "../status/display.ts";
+import { loadActivityWithProgress } from "../status/loader.ts";
 
 export async function logCommand(db: Database): Promise<void> {
   const activities = await listActivities(db);
@@ -33,9 +35,13 @@ export async function logCommand(db: Database): Promise<void> {
     });
     const minutes = parseInt(minutesStr, 10);
     await recordDuration(db, { activityId, minutes });
-    console.log(`\nLogged ${minutes} minutes for "${activity.name}"`);
   } else {
     await recordCompletion(db, { activityId });
-    console.log(`\nLogged completion for "${activity.name}"`);
+  }
+
+  // Show updated status for this activity
+  const item = await loadActivityWithProgress(db, activityId);
+  if (item) {
+    displaySingleActivity(item);
   }
 }
