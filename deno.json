@@ -13,10 +13,12 @@
     "drizzle-orm/libsql": "npm:drizzle-orm@^0.38/libsql",
     "drizzle-orm/sqlite-core": "npm:drizzle-orm@^0.38/sqlite-core",
     "@libsql/client": "npm:@libsql/client@^0.14",
+    "@libsql/client/node": "npm:@libsql/client@^0.14/node",
     "@std/assert": "jsr:@std/assert@^1",
     "@std/testing": "jsr:@std/testing@^1"
   },
   "tasks": {
+    "install": "deno install --global --force --name antara --config deno.json -ERWS --allow-ffi src/cli/main.ts",
     "dev": "deno run --watch -ERWS --allow-ffi src/cli/main.ts",
     "cli": "deno run -ERWS --allow-ffi src/cli/main.ts",
     "test": "deno test --allow-ffi --allow-read --allow-write --allow-env",

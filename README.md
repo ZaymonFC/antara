@@ -4,6 +4,29 @@
 
 Track the rhythms of life—recurring patterns you want to maintain.
 
+## Installation
+
+Requires [Deno](https://deno.land/) v2.0+
+
+```bash
+git clone https://github.com/zan/antara.git
+cd antara
+deno task install
+```
+
+This installs `antara` globally.
+
+**Data location:**
+- macOS/Windows: `~/.antara/db.sqlite`
+- Linux: `$XDG_DATA_HOME/antara/db.sqlite` (defaults to `~/.local/share/antara/`)
+
+Run migrations on first use:
+
+```bash
+antara  # will create the database
+deno task db:migrate
+```
+
 ## Domain
 
 Everything has a **rhythm** (when), a **target** (how much), and a **measurement** (what units).
@@ -67,7 +90,7 @@ deno task test            # Run tests
 deno task biome           # Lint and format
 
 deno task dev             # Run CLI (dev mode with watch)
-deno task start           # Run CLI (production)
+deno task cli             # Run CLI
 ```
 
 ## License
