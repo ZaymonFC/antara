@@ -14,7 +14,7 @@ cd antara
 deno task install
 ```
 
-This installs `antara` globally via `deno install`. The database is created automatically on first (`~/.antara/db.sqlite`).
+This installs `antara` globally via `deno install`. The database is created automatically on first run (`~/.antara/db.sqlite`).
 
 ### Rhythm
 
