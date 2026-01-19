@@ -14,22 +14,34 @@ export function displayFullStatus(items: ActivityWithProgress[]): void {
   displayHeader(items, now);
 
   // Group activities into three categories
-  const overdue = items.filter((i) => i.progress.daysOverdue !== undefined);
-  const dueSoon = items.filter(
-    (i) => i.progress.daysOverdue === undefined && !i.progress.isOnTrack,
+  const needsAttention = items.filter(
+    (i) => i.progress.daysOverdue !== undefined || i.progress.daysUntilDue === 0,
+  );
+  const inProgress = items.filter(
+    (i) =>
+      i.progress.daysOverdue === undefined &&
+      i.progress.daysUntilDue !== 0 &&
+      !i.progress.isOnTrack,
   );
   const complete = items.filter(
-    (i) => i.progress.daysOverdue === undefined && i.progress.isOnTrack,
+    (i) =>
+      i.progress.daysOverdue === undefined && i.progress.daysUntilDue !== 0 && i.progress.isOnTrack,
   );
 
-  if (overdue.length > 0) {
-    console.log(colors.yellow(`Overdue (${overdue.length})`));
-    displaySection(overdue, colors.yellow);
+  if (needsAttention.length > 0) {
+    console.log(colors.yellow(`Needs Attention (${needsAttention.length})`));
+    // Display overdue (red) and due today (yellow) with different colors
+    const maxNameLength = Math.max(...needsAttention.map((i) => i.name.length));
+    for (const item of needsAttention) {
+      const colorFn = item.progress.daysOverdue !== undefined ? colors.red : colors.yellow;
+      displayItem(item, colorFn, maxNameLength);
+    }
+    console.log();
   }
 
-  if (dueSoon.length > 0) {
-    console.log(colors.cyan(`In Progress (${dueSoon.length})`));
-    displaySection(dueSoon, colors.cyan);
+  if (inProgress.length > 0) {
+    console.log(colors.blue(`In Progress (${inProgress.length})`));
+    displaySection(inProgress, colors.blue);
   }
 
   if (complete.length > 0) {
@@ -48,11 +60,13 @@ export function displaySingleActivity(item: ActivityWithProgress): void {
   const contextStr = formatContext(item);
 
   // Determine color based on status
-  let colorFn = colors.cyan;
+  let colorFn = colors.blue; // in progress (default)
   if (item.progress.daysOverdue !== undefined) {
-    colorFn = colors.yellow;
+    colorFn = colors.red; // overdue
+  } else if (item.progress.daysUntilDue === 0) {
+    colorFn = colors.yellow; // due today
   } else if (item.progress.isOnTrack) {
-    colorFn = colors.green;
+    colorFn = colors.green; // complete
   }
 
   console.log(`\n${colorFn(item.name)}  ${progressStr}  ${colors.dim(contextStr)}`);
@@ -67,6 +81,7 @@ function displayHeader(items: ActivityWithProgress[], now: Date): void {
 
   const activityWord = items.length === 1 ? "activity" : "activities";
   console.log();
+  console.log(colors.bold("Antara (अन्तर) Status Report"));
   console.log(
     colors.dim(dateStr) + colors.dim(" · ") + colors.dim(`${items.length} ${activityWord}`),
   );
@@ -75,28 +90,40 @@ function displayHeader(items: ActivityWithProgress[], now: Date): void {
 
 function displaySection(items: ActivityWithProgress[], colorFn: (str: string) => string): void {
   const maxNameLength = Math.max(...items.map((i) => i.name.length));
-
   for (const item of items) {
-    const name = item.name.padEnd(maxNameLength + 2);
-    const progressStr = formatProgress(item);
-    const contextStr = formatContext(item);
-
-    console.log(`  ${colorFn(name)}${progressStr}  ${colors.dim(contextStr)}`);
+    displayItem(item, colorFn, maxNameLength);
   }
   console.log();
+}
+
+function displayItem(
+  item: ActivityWithProgress,
+  colorFn: (str: string) => string,
+  maxNameLength?: number,
+): void {
+  const progressStr = formatProgress(item);
+  const contextStr = formatContext(item);
+  const name = maxNameLength ? item.name.padEnd(maxNameLength + 2) : item.name;
+  console.log(`  ${colorFn(name)}${progressStr}  ${colors.dim(contextStr)}`);
 }
 
 function formatProgress(item: ActivityWithProgress): string {
   const { progress, measurement, rhythm } = item;
 
-  // For recurring rhythms that are complete, show checkmark
-  if (rhythm.kind === "recurring" && progress.isOnTrack) {
-    const lastDone = progress.context === "today" ? "Done today" : `Done ${progress.context}`;
-    return colors.green(`✓ ${lastDone}`);
-  }
-
-  // For recurring rhythms that are overdue or not started
+  // For recurring rhythms
   if (rhythm.kind === "recurring") {
+    // Due today - needs attention
+    if (progress.daysUntilDue === 0) {
+      return colors.yellow("Due today");
+    }
+
+    // On track, not due today
+    if (progress.isOnTrack) {
+      const lastDone = progress.context === "today" ? "Done today" : `Done ${progress.context}`;
+      return colors.green(`✓ ${lastDone}`);
+    }
+
+    // Overdue or not started
     return progress.context === "Not started yet"
       ? colors.dim("Not started yet")
       : colors.yellow(progress.context);
@@ -126,10 +153,12 @@ function formatContext(item: ActivityWithProgress): string {
 
   // For recurring rhythms
   if (rhythm.kind === "recurring") {
+    // If due today, show when it was last done (not "due today" again)
+    if (progress.daysUntilDue === 0) {
+      return `last done ${progress.context}`;
+    }
+
     if (progress.isOnTrack && progress.daysUntilDue !== undefined) {
-      if (progress.daysUntilDue === 0) {
-        return "due today";
-      }
       if (progress.daysUntilDue === 1) {
         return "due tomorrow";
       }
