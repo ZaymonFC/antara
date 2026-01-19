@@ -2,7 +2,7 @@
 
 > _antara_ (अन्तर) - Sanskrit for interval, space, or gap
 
-Track the rhythms of life—recurring patterns you want to maintain.
+Tune the rhythms of life.
 
 ## Installation
 

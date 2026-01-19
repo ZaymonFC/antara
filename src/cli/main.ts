@@ -20,9 +20,7 @@ const db = await initDatabase();
 const cmd = new Command()
   .name("antara")
   .version("0.1.0")
-  .description(
-    "अन्तर (antara) - the intervals between. Track your rhythms: what you do, how often, and whether you're keeping up.",
-  )
+  .description("अन्तर (antara) - Tune the rhythms of life.")
   .action(function () {
     this.showHelp();
   })
