@@ -44,6 +44,18 @@ How progress is counted:
 
 > Tasks always use instances. Pursuits can use either.
 
+### Errands
+
+One-off tasks with no rhythm. Due immediately upon creation. Completed errands remain visible for 3 days, then fade from view.
+
+```bash
+antara errand add     # Add a new errand
+antara errand         # List errands
+antara errand done    # Mark an errand complete
+```
+
+Errands also appear in `antara status`.
+
 ## Development
 
 ```bash
