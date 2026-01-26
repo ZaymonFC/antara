@@ -93,3 +93,22 @@ export type NewActivity = InferInsertModel<typeof activities>;
 // Inferred types for History
 export type HistoryEvent = InferSelectModel<typeof history>;
 export type NewHistoryEvent = InferInsertModel<typeof history>;
+
+/**
+ * Errands table - one-off tasks with no rhythm
+ *
+ * Errands are due immediately upon creation. Once completed, they remain
+ * visible for 3 days before being hidden from the default list view.
+ */
+export const errands = sqliteTable("errands", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  name: text("name").notNull(),
+  createdAt: integer("created_at", { mode: "timestamp" })
+    .notNull()
+    .$defaultFn(() => new Date()),
+  completedAt: integer("completed_at", { mode: "timestamp" }),
+});
+
+// Inferred types for Errand
+export type Errand = InferSelectModel<typeof errands>;
+export type NewErrand = InferInsertModel<typeof errands>;

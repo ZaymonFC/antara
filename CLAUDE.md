@@ -53,3 +53,13 @@ deno task test
 ```bash
 deno task check
 ```
+
+## Database Migrations
+
+After modifying `src/db/schema.ts`, generate migrations with:
+
+```bash
+deno task db:generate
+```
+
+**Important:** Drizzle only runs migrations where the `when` timestamp in `drizzle/meta/_journal.json` is greater than the last applied migration. Migrations with older timestamps are silently skipped.

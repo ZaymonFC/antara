@@ -3,15 +3,26 @@
  */
 
 import { colors } from "@cliffy/ansi/colors";
+import type { Errand } from "../../db/schema.ts";
 import type { Rhythm } from "../../types.ts";
 import type { ActivityWithProgress } from "./types.ts";
 
 /**
  * Display the full status with header and grouped sections.
  */
-export function displayFullStatus(items: ActivityWithProgress[]): void {
+export function displayFullStatus(items: ActivityWithProgress[], errands: Errand[] = []): void {
   const now = new Date();
-  displayHeader(items, now);
+  displayHeader(items, errands, now);
+
+  // Pending errands go at the top - they're due immediately
+  const pendingErrands = errands.filter((e) => e.completedAt === null);
+  if (pendingErrands.length > 0) {
+    console.log(colors.yellow(`Errands (${pendingErrands.length})`));
+    for (const errand of pendingErrands) {
+      console.log(`  ${colors.yellow("•")} ${errand.name}`);
+    }
+    console.log();
+  }
 
   // Group activities into three categories
   const needsAttention = items.filter(
@@ -49,6 +60,20 @@ export function displayFullStatus(items: ActivityWithProgress[]): void {
     displaySection(complete, colors.green);
   }
 
+  // Recently completed errands at the bottom
+  const completedErrands = errands.filter((e) => e.completedAt !== null);
+  if (completedErrands.length > 0) {
+    console.log(colors.dim(`Recently Done (${completedErrands.length})`));
+    for (const errand of completedErrands) {
+      const completedAt = errand.completedAt as Date;
+      const completedStr = formatCompletedDate(completedAt, now);
+      console.log(
+        `  ${colors.dim("✓")} ${colors.strikethrough(colors.dim(errand.name))}  ${colors.dim(completedStr)}`,
+      );
+    }
+    console.log();
+  }
+
   console.log();
 }
 
@@ -72,7 +97,7 @@ export function displaySingleActivity(item: ActivityWithProgress): void {
   console.log(`\n${colorFn(item.name)}  ${progressStr}  ${colors.dim(contextStr)}`);
 }
 
-function displayHeader(items: ActivityWithProgress[], now: Date): void {
+function displayHeader(items: ActivityWithProgress[], errands: Errand[], now: Date): void {
   const dateStr = now.toLocaleDateString("en-US", {
     weekday: "long",
     month: "short",
@@ -80,12 +105,37 @@ function displayHeader(items: ActivityWithProgress[], now: Date): void {
   });
 
   const activityWord = items.length === 1 ? "activity" : "activities";
+  const pendingErrands = errands.filter((e) => e.completedAt === null).length;
+
+  const parts: string[] = [];
+  if (items.length > 0) {
+    parts.push(`${items.length} ${activityWord}`);
+  }
+  if (pendingErrands > 0) {
+    const errandWord = pendingErrands === 1 ? "errand" : "errands";
+    parts.push(`${pendingErrands} ${errandWord}`);
+  }
+
   console.log();
   console.log(colors.bold("Antara (अन्तर) Status Report"));
   console.log(
-    colors.dim(dateStr) + colors.dim(" · ") + colors.dim(`${items.length} ${activityWord}`),
+    colors.dim(dateStr) +
+      (parts.length > 0 ? colors.dim(" · ") + colors.dim(parts.join(", ")) : ""),
   );
   console.log();
+}
+
+function formatCompletedDate(date: Date, now: Date): string {
+  const diffMs = now.getTime() - date.getTime();
+  const diffDays = Math.floor(diffMs / (24 * 60 * 60 * 1000));
+
+  if (diffDays === 0) {
+    return "today";
+  }
+  if (diffDays === 1) {
+    return "yesterday";
+  }
+  return `${diffDays} days ago`;
 }
 
 function displaySection(items: ActivityWithProgress[], colorFn: (str: string) => string): void {

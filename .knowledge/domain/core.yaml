@@ -124,6 +124,43 @@ Activity:
       measurement: instances
 
 # =============================================================================
+# ERRAND - One-off tasks (no rhythm)
+# =============================================================================
+
+Errand:
+  description: |
+    A one-off task with no rhythm. Due immediately upon creation.
+    Completed errands remain visible for 3 days, then hidden from default view.
+    Separate from Activities to keep the rhythmic domain clean.
+
+  properties:
+    name: string
+    createdAt: datetime
+    completedAt: datetime | null
+
+  lifecycle:
+    - "Created → immediately due (pending)"
+    - "Completed → visible for 3 days as done"
+    - "After 3 days → hidden from default list (still in DB)"
+
+  computed:
+    status:
+      pending: "completedAt is null"
+      completed: "completedAt within last 3 days"
+      expired: "completedAt > 3 days ago (hidden by default)"
+
+  examples:
+    - name: "Buy milk"
+      createdAt: "2024-01-15T10:00:00"
+      completedAt: null
+      # status: pending
+
+    - name: "Call dentist"
+      createdAt: "2024-01-10T09:00:00"
+      completedAt: "2024-01-14T14:30:00"
+      # status: completed (if within 3 days) or expired
+
+# =============================================================================
 # HISTORY - Event store
 # =============================================================================
 
@@ -185,6 +222,8 @@ glossary:
   framing: "UX mindset - task (maintenance) vs pursuit (growth)"
   target: "The goal number - instances or minutes to achieve"
   measurement: "What we count - instances (occurrences) or duration (minutes)"
+
+  errand: "One-off task with no rhythm - due immediately, fades after completion"
 
   history: "Event store of all completions and duration logs"
   progress: "Current vs target within rhythm period (computed)"

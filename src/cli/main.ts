@@ -6,12 +6,14 @@
  * - antara log    → Log a completion or duration
  * - antara create → Create a new activity
  * - antara status → Show progress for all activities
+ * - antara errand → Manage one-off errands
  */
 
 import { Command } from "@cliffy/command";
 import { initDatabase } from "../db/connection.ts";
 import { createCommand } from "./commands/create.ts";
 import { editCommand } from "./commands/edit.ts";
+import { errandAddCommand, errandDoneCommand, errandListCommand } from "./commands/errand.ts";
 import { logCommand } from "./commands/log.ts";
 import { statusCommand } from "./commands/status.ts";
 
@@ -39,5 +41,22 @@ const cmd = new Command()
   .command("status", "Show progress for all activities")
   .action(async () => {
     await statusCommand(db);
-  });
+  })
+  .command(
+    "errand",
+    new Command()
+      .description("Manage one-off errands")
+      .action(async () => {
+        await errandListCommand(db);
+      })
+      .command("add", "Add a new errand")
+      .action(async () => {
+        await errandAddCommand(db);
+      })
+      .reset()
+      .command("done", "Mark an errand as complete")
+      .action(async () => {
+        await errandDoneCommand(db);
+      }),
+  );
 await cmd.parse(Deno.args);
