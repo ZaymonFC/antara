@@ -136,8 +136,7 @@ export async function getActivityHistory(
     .select()
     .from(history)
     .where(and(...conditions))
-    .orderBy(desc(history.timestamp))
-    .$dynamic();
+    .orderBy(desc(history.timestamp));
 
   if (options?.limit) {
     return await query.limit(options.limit).all();

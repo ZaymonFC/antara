@@ -23,7 +23,7 @@
     "install": "deno install --global --force --name antara --config deno.json -ERWS --allow-ffi src/cli/main.ts",
     "dev": "deno run --watch -ERWS --allow-ffi src/cli/main.ts",
     "cli": "deno run -ERWS --allow-ffi src/cli/main.ts",
-    "test": "deno test --allow-ffi --allow-read --allow-write --allow-env",
+    "test": "deno test --parallel --allow-ffi --allow-read --allow-write --allow-env",
     "check": "deno check src/",
     "lint": "deno run -A npm:@biomejs/biome lint ./src",
     "fmt": "deno run -A npm:@biomejs/biome format --write ./src",
