@@ -68,7 +68,7 @@ describe("progress", () => {
       const progress = getProgress(activity, rhythm, history, now);
 
       assertEquals(progress.isOnTrack, false);
-      assertEquals(progress.context, "3 days overdue"); // 10 - 7 = 3 days overdue
+      assertEquals(progress.context, "due today");
     });
 
     it("should be overdue when never done", () => {

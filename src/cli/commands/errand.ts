@@ -85,6 +85,7 @@ export async function errandDoneCommand(db: Database): Promise<void> {
 
   const errandId = await Select.prompt({
     message: "Which errand is done?",
+    search: true,
     options: pending.map((e) => ({
       name: e.name,
       value: e.id,

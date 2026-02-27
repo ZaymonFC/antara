@@ -93,7 +93,7 @@ function getRecurringProgress(
     current: 0,
     target: activity.target,
     isOnTrack: false,
-    context: `${daysOverdue} day${daysOverdue === 1 ? "" : "s"} overdue`,
+    context: "due today",
     daysOverdue,
   };
 }
