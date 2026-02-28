@@ -746,6 +746,7 @@
       "jsr:@std/testing@1",
       "npm:@libsql/client@0.14",
       "npm:date-fns@^4.1.0",
+      "npm:drizzle-kit@*",
       "npm:drizzle-orm@0.38"
     ]
   }

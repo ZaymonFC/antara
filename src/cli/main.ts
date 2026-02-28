@@ -27,8 +27,9 @@ const cmd = new Command()
     this.showHelp();
   })
   .command("log", "Log a completion or duration for an activity")
-  .action(async () => {
-    await logCommand(db);
+  .arguments("[name:string]")
+  .action(async (_options: void, name?: string) => {
+    await logCommand(db, name);
   })
   .command("create", "Create a new activity")
   .action(async () => {
