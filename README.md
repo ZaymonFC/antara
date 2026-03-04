@@ -56,6 +56,20 @@ antara errand done    # Mark an errand complete
 
 Errands also appear in `antara status`.
 
+### Shell Completions (zsh)
+
+```bash
+deno task install:zsh-completions
+```
+
+Then add to `~/.zshrc` (before `compinit`):
+
+```bash
+fpath=(~/.zsh/completions $fpath)
+```
+
+Restart your shell. Tab-completion works for subcommands (`antara <tab>`) and activity names (`antara log <tab>`).
+
 ## Development
 
 ```bash
