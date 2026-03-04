@@ -33,6 +33,7 @@
     "db:generate": "deno run -A npm:drizzle-kit generate",
     "db:migrate": "deno run -A npm:drizzle-kit migrate",
     "db:studio": "deno run -A npm:drizzle-kit studio",
+    "install:zsh-completions": "mkdir -p ~/.zsh/completions && cp completions/_antara ~/.zsh/completions/_antara && echo 'Completions installed. Ensure ~/.zsh/completions is in your fpath (add: fpath=(~/.zsh/completions $fpath) to ~/.zshrc before compinit)'",
     "postinstall": "sed -i.bak 's/\"deno\"/\"no-deno\"/' node_modules/@libsql/client/package.json 2>/dev/null || true"
   },
   "compilerOptions": {

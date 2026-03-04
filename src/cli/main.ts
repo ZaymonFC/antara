@@ -16,6 +16,7 @@ import { editCommand } from "./commands/edit.ts";
 import { errandAddCommand, errandDoneCommand, errandListCommand } from "./commands/errand.ts";
 import { logCommand } from "./commands/log.ts";
 import { statusCommand } from "./commands/status.ts";
+import { updateCompletionCache } from "./completions.ts";
 
 const db = await initDatabase();
 
@@ -61,3 +62,4 @@ const cmd = new Command()
       }),
   );
 await cmd.parse(Deno.args);
+await updateCompletionCache(db);

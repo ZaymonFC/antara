@@ -45,7 +45,7 @@ async function runMigrations(db: Database): Promise<void> {
  * Returns ~/.local/share/antara on Linux (or XDG_DATA_HOME/antara)
  * Returns ~/.antara on macOS/Windows
  */
-function getDataDir(): string {
+export function getDataDir(): string {
   const home = Deno.env.get("HOME") || Deno.env.get("USERPROFILE");
   if (!home) {
     throw new Error("Could not determine home directory");
