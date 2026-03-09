@@ -29,6 +29,7 @@ const cmd = new Command()
   })
   .command("log", "Log a completion or duration for an activity")
   .arguments("[name:string]")
+  // biome-ignore lint/suspicious/noConfusingVoidType: Cliffy action handler requires void
   .action(async (_options: void, name?: string) => {
     await logCommand(db, name);
   })

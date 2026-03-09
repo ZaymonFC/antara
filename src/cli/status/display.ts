@@ -5,6 +5,7 @@
 import { colors } from "@cliffy/ansi/colors";
 import type { Errand } from "../../db/schema.ts";
 import type { Rhythm } from "../../types.ts";
+import { getQuoteOfTheDay } from "./quotes.ts";
 import type { ActivityWithProgress } from "./types.ts";
 
 /**
@@ -13,6 +14,9 @@ import type { ActivityWithProgress } from "./types.ts";
 export function displayFullStatus(items: ActivityWithProgress[], errands: Errand[] = []): void {
   const now = new Date();
   displayHeader(items, errands, now);
+
+  console.log(`  ${colors.dim(getQuoteOfTheDay(now))}`);
+  console.log();
 
   // Pending errands go at the top - they're due immediately
   const pendingErrands = errands.filter((e) => e.completedAt === null);

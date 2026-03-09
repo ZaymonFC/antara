@@ -116,7 +116,7 @@ export async function updateActivity(
  * Returns the updated activity, or undefined if not found
  * Note: History is linked by activity_id, so renaming does not affect history
  */
-export async function renameActivity(
+export function renameActivity(
   db: Database,
   id: number,
   newName: string,

@@ -39,7 +39,7 @@ const TIME_UNIT_OPTIONS = [
 
 // Prompt functions
 
-export async function promptName(defaultValue?: string): Promise<string> {
+export function promptName(defaultValue?: string): Promise<string> {
   return Input.prompt({
     message: "What do you want to track?",
     default: defaultValue,
@@ -94,10 +94,7 @@ export async function promptNumber(message: string, defaultValue?: number): Prom
   return parseInt(str, 10);
 }
 
-export async function promptTarget(
-  measurement: Measurement,
-  defaultValue?: number,
-): Promise<number> {
+export function promptTarget(measurement: Measurement, defaultValue?: number): Promise<number> {
   const message = measurement === "duration" ? "How many minutes?" : "How many times?";
   return promptNumber(message, defaultValue);
 }
