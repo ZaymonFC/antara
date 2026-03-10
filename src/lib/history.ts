@@ -146,12 +146,28 @@ export async function getActivityHistory(
 }
 
 /**
- * Get recent history across all activities
+ * Get recent history across all activities, including activity name.
  *
  * Results are returned in descending order by timestamp (most recent first).
  */
-export async function getRecentHistory(db: Database, limit: number = 10): Promise<HistoryEvent[]> {
-  return await db.select().from(history).orderBy(desc(history.timestamp)).limit(limit).all();
+export async function getRecentHistory(
+  db: Database,
+  limit: number = 10,
+): Promise<(HistoryEvent & { activityName: string })[]> {
+  return await db
+    .select({
+      id: history.id,
+      activityId: history.activityId,
+      kind: history.kind,
+      minutes: history.minutes,
+      timestamp: history.timestamp,
+      activityName: activities.name,
+    })
+    .from(history)
+    .innerJoin(activities, eq(history.activityId, activities.id))
+    .orderBy(desc(history.timestamp))
+    .limit(limit)
+    .all();
 }
 
 // =============================================================================

@@ -2,6 +2,8 @@
  * Quote of the day for status display.
  */
 
+import { dayOfYear } from "@std/datetime";
+
 interface Quote {
   text: string;
   attribution?: string;
@@ -173,7 +175,7 @@ function formatQuote(quote: Quote): string {
  * Same quote all day, cycles through all quotes before repeating.
  */
 export function getQuoteOfTheDay(date: Date = new Date()): string {
-  const dayNumber = Math.floor(date.getTime() / 86_400_000);
+  const dayNumber = date.getFullYear() * 366 + dayOfYear(date);
   const index = getPermutedIndex(dayNumber, quotes.length);
   return formatQuote(quotes[index]);
 }

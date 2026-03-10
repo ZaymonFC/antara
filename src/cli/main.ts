@@ -14,6 +14,7 @@ import { initDatabase } from "../db/connection.ts";
 import { createCommand } from "./commands/create.ts";
 import { editCommand } from "./commands/edit.ts";
 import { errandAddCommand, errandDoneCommand, errandListCommand } from "./commands/errand.ts";
+import { historyCommand } from "./commands/history.ts";
 import { logCommand } from "./commands/log.ts";
 import { statusCommand } from "./commands/status.ts";
 import { updateCompletionCache } from "./completions.ts";
@@ -40,6 +41,11 @@ const cmd = new Command()
   .command("edit", "Edit an existing activity")
   .action(async () => {
     await editCommand(db);
+  })
+  .command("history", "Show recent activity events")
+  .option("-n, --count <count:integer>", "Number of events to show", { default: 15 })
+  .action(async (options: { count: number }) => {
+    await historyCommand(db, options.count);
   })
   .command("status", "Show progress for all activities")
   .action(async () => {
