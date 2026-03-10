@@ -56,6 +56,17 @@ antara errand done    # Mark an errand complete
 
 Errands also appear in `antara status`.
 
+## Commands
+
+| Command            | Description                              |
+| ------------------ | ---------------------------------------- |
+| `antara status`    | Show progress for all activities         |
+| `antara log [name]`| Log a completion or duration             |
+| `antara history [-n N]` | Show recent activity events (default: 15) |
+| `antara create`    | Create a new activity                    |
+| `antara edit`      | Edit an existing activity                |
+| `antara errand`    | Manage one-off errands                   |
+
 ### Shell Completions (zsh)
 
 ```bash
